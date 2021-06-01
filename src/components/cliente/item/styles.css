@@ -1,0 +1,21 @@
+.card {
+  width: 80%;
+  margin: 0 auto;
+}
+.imagem {
+  width: 100%;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
+.link {
+  text-decoration: 'none';
+  color: '#2e3192',
+}
+.observacao {
+  min-width : 100% !important;
+}
+.back {
+  right: 30%;
+}

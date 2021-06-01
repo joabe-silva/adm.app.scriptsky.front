@@ -1,0 +1,14 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow: /item/
+Disallow: /carrinho/
+Disallow: /meu-perfil/
+Disallow: /meus-pedidos/
+Disallow: /pedido-itens/
+Disallow: /cadastro-entidade/
+Disallow: /cadastro-entidade-endereco/
+Disallow: /editar-usuario/
+Disallow: /editar-endereco/
+Allow: /logins
+
+
