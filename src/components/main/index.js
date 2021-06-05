@@ -1,32 +1,62 @@
 import React from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import Link from '@material-ui/core/Link';
 import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
 import MenuIcon from '@material-ui/icons/Menu';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+
+import DashboardIcon from '@material-ui/icons/DashboardRounded';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoneyRounded';
+import AccountCircledIcon from '@material-ui/icons/AccountCircleRounded';
+import ExitToAppIcon from '@material-ui/icons/ExitToAppRounded';
+
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Routes from '../../routes';
-import Styles from './styles';
+import styles from './styles';
 
 function Main(props) {
+
   const { window } = props;
-  const classes = Styles();
+  const classes = styles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [openPedidos, setOpenPedidos] = React.useState(true);
+  const [openProduto, setOpenProduto] = React.useState(false);
+  const [openGrupoProdutos, setOpenGrupoProdutos] = React.useState(false);
+  const [openUsuarios, setOpenUsuarios] = React.useState(false);
+  const [openConfig, setOpenConfig] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+  const handleClickPedidos = () => {
+    setOpenPedidos(!openPedidos);
+  };
+  const handleClickProduto = () => {
+    setOpenProduto(!openProduto);
+  };
+  const handleClickGrupoProdutos = () => {
+    setOpenGrupoProdutos(!openGrupoProdutos);
+  };
+  const handleClickUsuarios = () => {
+    setOpenUsuarios(!openUsuarios);
+  };
+  const handleClickConfig = () => {
+    setOpenConfig(!openConfig);
   };
 
   const drawer = (
@@ -34,48 +64,153 @@ function Main(props) {
       <div className={classes.toolbar} />
       <Divider />
       <List>
-          <ListItem button>
+          <Link href={'/dashboard'} style={{ textDecoration: 'none', color: 'black', }}>
+            <ListItem button>
+              <ListItemIcon>
+                  <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary='Dashboard' />
+            </ListItem>
+          </Link>
+          <ListItem button onClick={handleClickPedidos}>
             <ListItemIcon>
-                <InboxIcon />
+              <InboxIcon />
             </ListItemIcon>
-            <ListItemText primary='Dashboard' />
+            <ListItemText primary="Pedidos" />
+            {openPedidos ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <ListItem button>
+          <Collapse in={openPedidos} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link href={'/pedidos-pendente'} style={{ textDecoration: 'none', color: 'black', }}>
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                  <InboxIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Pendente" />
+                </ListItem>
+              </Link>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Concluídos" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Pesquisa" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          <ListItem button onClick={handleClickProduto}>
             <ListItemIcon>
-                <InboxIcon />
+              <InboxIcon />
             </ListItemIcon>
-            <ListItemText primary='Pedidos' />
+            <ListItemText primary="Produto" />
+            {openProduto ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <ListItem button>
+          <Collapse in={openProduto} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Cadastro" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Pesquisa" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          <ListItem button onClick={handleClickGrupoProdutos}>
             <ListItemIcon>
-                <InboxIcon />
+              <InboxIcon />
             </ListItemIcon>
-            <ListItemText primary='Produto' />
+            <ListItemText primary="Grupo de Produtos" />
+            {openGrupoProdutos ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
-          <ListItem button>
+          <Collapse in={openGrupoProdutos} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Cadastro" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Pesquisa" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          <ListItem button onClick={handleClickUsuarios}>
             <ListItemIcon>
-                <InboxIcon />
+              <InboxIcon />
             </ListItemIcon>
-            <ListItemText primary='Funcionarios / Clientes' />
+            <ListItemText primary="Usuários" />
+            {openUsuarios ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
+          <Collapse in={openUsuarios} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Funcionários" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Clientes" />
+              </ListItem>
+            </List>
+          </Collapse>
       </List>
       <Divider />
       <List>
-         <ListItem button>
+          <ListItem button onClick={handleClickConfig}>
             <ListItemIcon>
-                <InboxIcon />
+              <InboxIcon />
             </ListItemIcon>
-            <ListItemText primary='Parametros' />
+            <ListItemText primary="Configurações" />
+            {openConfig ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItem>
+          <Collapse in={openConfig} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Loja" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <AttachMoneyIcon />
+                </ListItemIcon>
+                <ListItemText primary="Formas de Pagamento" />
+              </ListItem>
+            </List>
+          </Collapse>
+
           <ListItem button>
             <ListItemIcon>
-                <InboxIcon />
+              <AccountCircledIcon />
             </ListItemIcon>
             <ListItemText primary='Meu Perfil' />
           </ListItem>
           <ListItem button>
             <ListItemIcon>
-                <InboxIcon />
+              <ExitToAppIcon />
             </ListItemIcon>
             <ListItemText primary='Sair' />
           </ListItem>
@@ -87,7 +222,6 @@ function Main(props) {
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <IconButton
@@ -104,7 +238,7 @@ function Main(props) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <nav className={classes.drawer} aria-label="mailbox folders">
+      <nav className={classes.drawer} aria-label="menu">
         <Hidden smUp implementation="css">
           <Drawer
             container={container}
