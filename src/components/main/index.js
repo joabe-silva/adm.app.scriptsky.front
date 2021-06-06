@@ -16,7 +16,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
-
 import DashboardIcon from '@material-ui/icons/DashboardRounded';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoneyRounded';
 import AddIcon from '@material-ui/icons/AddRounded';
@@ -32,7 +31,6 @@ import StoreIcon from '@material-ui/icons/StorefrontRounded';
 import SettingsIcon from '@material-ui/icons/SettingsRounded';
 import AccountCircledIcon from '@material-ui/icons/AccountCircleRounded';
 import ExitToAppIcon from '@material-ui/icons/ExitToAppRounded';
-
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -130,12 +128,14 @@ function Main(props) {
           </ListItem>
           <Collapse in={openProduto} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <AddIcon />
-                </ListItemIcon>
-                <ListItemText primary="Cadastro" />
-              </ListItem>
+              <Link href={'/produto-cadastro'} style={{ textDecoration: 'none', color: 'black', }}>
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <AddIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Cadastro" />
+                </ListItem>
+              </Link>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
                   <SearchIcon />
