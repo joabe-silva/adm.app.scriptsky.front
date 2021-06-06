@@ -19,6 +19,17 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 
 import DashboardIcon from '@material-ui/icons/DashboardRounded';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoneyRounded';
+import AddIcon from '@material-ui/icons/AddRounded';
+import SearchIcon from '@material-ui/icons/SearchRounded';
+import CheckIcon from '@material-ui/icons/CheckCircleOutlineRounded';
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmptyRounded';
+import AccessTimeIcon from '@material-ui/icons/AccessTimeRounded';
+import CategoryIcon from '@material-ui/icons/CategoryRounded';
+import AccountTreeIcon from '@material-ui/icons/AccountTreeRounded';
+import PostIcon from '@material-ui/icons/PostAddRounded';
+import GroupIcon from '@material-ui/icons/GroupRounded';
+import StoreIcon from '@material-ui/icons/StorefrontRounded';
+import SettingsIcon from '@material-ui/icons/SettingsRounded';
 import AccountCircledIcon from '@material-ui/icons/AccountCircleRounded';
 import ExitToAppIcon from '@material-ui/icons/ExitToAppRounded';
 
@@ -74,7 +85,7 @@ function Main(props) {
           </Link>
           <ListItem button onClick={handleClickPedidos}>
             <ListItemIcon>
-              <InboxIcon />
+              <PostIcon />
             </ListItemIcon>
             <ListItemText primary="Pedidos" />
             {openPedidos ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -84,20 +95,26 @@ function Main(props) {
               <Link href={'/pedidos-pendente'} style={{ textDecoration: 'none', color: 'black', }}>
                 <ListItem button className={classes.nested}>
                   <ListItemIcon>
-                  <InboxIcon />
+                    <HourglassEmptyIcon />
                   </ListItemIcon>
                   <ListItemText primary="Pendente" />
                 </ListItem>
               </Link>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
-                <InboxIcon />
+                  <AccessTimeIcon />
+                </ListItemIcon>
+                <ListItemText primary="Em andamento" />
+              </ListItem>
+              <ListItem button className={classes.nested}>
+                <ListItemIcon>
+                  <CheckIcon />
                 </ListItemIcon>
                 <ListItemText primary="Concluídos" />
               </ListItem>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
-                <InboxIcon />
+                  <SearchIcon />
                 </ListItemIcon>
                 <ListItemText primary="Pesquisa" />
               </ListItem>
@@ -106,7 +123,7 @@ function Main(props) {
 
           <ListItem button onClick={handleClickProduto}>
             <ListItemIcon>
-              <InboxIcon />
+              <CategoryIcon />
             </ListItemIcon>
             <ListItemText primary="Produto" />
             {openProduto ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -115,13 +132,13 @@ function Main(props) {
             <List component="div" disablePadding>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
-                <InboxIcon />
+                  <AddIcon />
                 </ListItemIcon>
                 <ListItemText primary="Cadastro" />
               </ListItem>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
-                <InboxIcon />
+                  <SearchIcon />
                 </ListItemIcon>
                 <ListItemText primary="Pesquisa" />
               </ListItem>
@@ -130,7 +147,7 @@ function Main(props) {
 
           <ListItem button onClick={handleClickGrupoProdutos}>
             <ListItemIcon>
-              <InboxIcon />
+              <AccountTreeIcon />
             </ListItemIcon>
             <ListItemText primary="Grupo de Produtos" />
             {openGrupoProdutos ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -139,13 +156,13 @@ function Main(props) {
             <List component="div" disablePadding>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
-                <InboxIcon />
+                  <AddIcon />
                 </ListItemIcon>
                 <ListItemText primary="Cadastro" />
               </ListItem>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
-                <InboxIcon />
+                  <SearchIcon />
                 </ListItemIcon>
                 <ListItemText primary="Pesquisa" />
               </ListItem>
@@ -154,7 +171,7 @@ function Main(props) {
 
           <ListItem button onClick={handleClickUsuarios}>
             <ListItemIcon>
-              <InboxIcon />
+              <GroupIcon />
             </ListItemIcon>
             <ListItemText primary="Usuários" />
             {openUsuarios ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -163,13 +180,13 @@ function Main(props) {
             <List component="div" disablePadding>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
-                <InboxIcon />
+                  <InboxIcon />
                 </ListItemIcon>
                 <ListItemText primary="Funcionários" />
               </ListItem>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
-                <InboxIcon />
+                  <InboxIcon />
                 </ListItemIcon>
                 <ListItemText primary="Clientes" />
               </ListItem>
@@ -178,42 +195,42 @@ function Main(props) {
       </List>
       <Divider />
       <List>
-          <ListItem button onClick={handleClickConfig}>
-            <ListItemIcon>
-              <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Configurações" />
-            {openConfig ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </ListItem>
-          <Collapse in={openConfig} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary="Loja" />
-              </ListItem>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <AttachMoneyIcon />
-                </ListItemIcon>
-                <ListItemText primary="Formas de Pagamento" />
-              </ListItem>
-            </List>
-          </Collapse>
+        <ListItem button onClick={handleClickConfig}>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Configurações" />
+          {openConfig ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </ListItem>
+        <Collapse in={openConfig} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <StoreIcon />
+              </ListItemIcon>
+              <ListItemText primary="Loja" />
+            </ListItem>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <AttachMoneyIcon />
+              </ListItemIcon>
+              <ListItemText primary="Formas de Pagamento" />
+            </ListItem>
+          </List>
+        </Collapse>
 
-          <ListItem button>
-            <ListItemIcon>
-              <AccountCircledIcon />
-            </ListItemIcon>
-            <ListItemText primary='Meu Perfil' />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <ExitToAppIcon />
-            </ListItemIcon>
-            <ListItemText primary='Sair' />
-          </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <AccountCircledIcon />
+          </ListItemIcon>
+          <ListItemText primary='Meu Perfil' />
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <ExitToAppIcon />
+          </ListItemIcon>
+          <ListItemText primary='Sair' />
+        </ListItem>
       </List>
     </div>
   );
