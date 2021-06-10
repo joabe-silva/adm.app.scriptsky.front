@@ -14,7 +14,7 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
-import firebase from '../../services/firebase';
+import storage from '../../services/firebase';
 import api from '../../services/api';
 
 
@@ -30,6 +30,13 @@ export default class ProdutoCadastro extends Component {
             cod_situacao: 1,
             titulo: 'Inativo'
         }],
+        url_imagem: 'https://firebasestorage.googleapis.com/v0/b/app-scriptsky-com-br.appspot.com/o/img_default.png?alt=media',
+        imagem: '',
+        titulo: '',
+        descricao: '',
+        preco: 0.00,
+        desconto: 0.00,
+        cod_produto_grupo: 0, 
         grupo: '',
         situacao: '',
     }
@@ -45,37 +52,75 @@ export default class ProdutoCadastro extends Component {
 
     setGrupo = (event) => {
         this.setState({ grupo: event.target.value });
-    };
+    }
 
     setSituacao = (event) => {
         this.setState({ situacao: event.target.value });
-    };
-
-    cadastra = () => {
-
-        const produto = {
-            
-            imagem: 'imagem',
-            titulo: document.getElementById('titulo').value,
-            descricao: document.getElementById('descricao').value,
-            preco: document.getElementById('preco').value,
-            desconto: 0.00,
-            cod_produto_grupo: this.state.grupo,
-            situacao: this.state.situacao
-            
-        }
-
-        console.log(produto)
-
     }
 
-    upload = () => {
-        console.log('Upload realizado com sucesso!')
+    titulo = (event) => {
+        this.setState({ titulo: event.target.value})
+    }
+
+    descricao = (event) => {
+        this.setState({ descricao: event.target.value})
+    }
+
+    preco = (event) => {
+        this.setState({ preco: event.target.value})
+    }
+
+    handleChangeImage = (event) => {
+        
+        const imagem = event.target.files[0]
+        
+        if(imagem){
+            //Transformando data
+            const data = new Date();
+            const dia  = data.getDate().toString().padStart(2, '0');
+            const mes  = (data.getMonth()+1).toString().padStart(2, '0');
+            const ano  = data.getFullYear();
+            const data_format = `${ dia }${ mes }${ ano }`;
+
+            //Transformando hora, min e segundos
+            const hora    = data.getHours();          
+            const min     = data.getMinutes();        
+            const seg     = data.getSeconds();        
+            const mseg    = data.getMilliseconds();
+            const hora_format = `${ hora }${ min }${ seg }${ mseg }`;
+
+            //Caso o cliente queira fazer upload de outra imagem o sistema remove a ultima imagem upada no storage
+            if(this.state.imagem_name) {
+                storage.ref("/").child(this.state.imagem_name).delete();
+                //console.log(this.state.imagem_name)
+            }
+            
+            //Realizando upload da imagem no storage
+            const uploadTask = storage.ref(`/${ data_format }${ hora_format }${ imagem.name }`).put(imagem);
+            uploadTask.on(
+                "state_changed",
+                snapshot => {},
+                error => {
+                    console.log(error);
+                },
+                () => {
+                    storage
+                    .ref("/")
+                    .child(`${ data_format }${ hora_format }${ imagem.name }`)
+                    .getDownloadURL()
+                    .then(url => {
+                        //console.log(url);
+                        this.setState({ url_imagem: url, imagem_name: `${ data_format }${ hora_format }${ imagem.name }` })
+                    });
+                }
+            ); 
+
+        }
     }
 
     render() {
 
-        const { grupos, grupo, situacoes, situacao } = this.state;
+        const { url_imagem, grupos, grupo, situacoes, situacao } = this.state;
 
         return (
 
@@ -83,7 +128,7 @@ export default class ProdutoCadastro extends Component {
                 <Card>
                     <CardActionArea>
                         <CardMedia>
-                            <img src="" alt="Imagem do Produto" style={{ width: '100%' }} />
+                            <img src={ url_imagem } alt="Imagem do Produto" style={{ width: '100%' }} />
                         </CardMedia>
                     </CardActionArea>
                     <CardContent>
@@ -92,18 +137,18 @@ export default class ProdutoCadastro extends Component {
                         </Typography>
                         <Grid container spacing={2}>
                             <Grid item xs={10}>
-                                <TextField type="text" id="titulo" label="Titulo" required fullWidth/>
+                                <TextField type="text" id="titulo" label="Titulo" onChange={ this.cadastra } required fullWidth/>
                             </Grid>
                             <Grid item xs={2}>
-                                <input accept="image/*" style={{ display: 'none' }} id="icon-button-file" type="file" />
-                                <label htmlFor="icon-button-file">
-                                    <IconButton color="primary" aria-label="Upload de Imagem" component="span" onChange={ this.upload }>
+                                <input type="file"  accept="image/*" style={{ display: 'none' }} id="files" onChange={ this.handleChangeImage }/>
+                                <label htmlFor="files">
+                                    <IconButton color="primary" aria-label="Upload de Imagem" component="span">
                                         <PhotoCamera />
                                     </IconButton>
                                 </label>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField type="text" id="descricao" label="Descrição" multiline rowsMax={2} fullWidth/>
+                                <TextField type="text" id="descricao" label="Descrição" onChange={ this.cadastra } multiline rowsMax={2} fullWidth/>
                             </Grid>
                             <Grid item xs={4}>
                                 <TextField type="text" id="preco" label="Preço" placeholder="0.00" required fullWidth/>
