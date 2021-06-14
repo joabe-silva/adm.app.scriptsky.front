@@ -8,12 +8,14 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import RemoveIcon from '@material-ui/icons/RemoveCircleRounded';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
+import AlertaPreechaTodoFurmulario from '../alertas/preencha-todo-formulario';
 import storage from '../../services/firebase';
 import api from '../../services/api';
 
@@ -31,14 +33,14 @@ export default class ProdutoCadastro extends Component {
             titulo: 'Inativo'
         }],
         url_imagem: 'https://firebasestorage.googleapis.com/v0/b/app-scriptsky-com-br.appspot.com/o/img_default.png?alt=media',
-        imagem: '',
+        imagem_name: 'img_default.png',
         titulo: '',
         descricao: '',
-        preco: 0.00,
-        desconto: 0.00,
+        preco: 0,
         cod_produto_grupo: 0, 
         grupo: '',
         situacao: '',
+        alerta: '',
     }
 
     componentDidMount(){
@@ -58,20 +60,29 @@ export default class ProdutoCadastro extends Component {
         this.setState({ situacao: event.target.value });
     }
 
-    titulo = (event) => {
+    setTitulo = (event) => {
         this.setState({ titulo: event.target.value})
     }
 
-    descricao = (event) => {
+    setDescricao = (event) => {
         this.setState({ descricao: event.target.value})
     }
 
-    preco = (event) => {
+    setPreco = (event) => {
         this.setState({ preco: event.target.value})
     }
 
+    removeImagem = () => {
+        if(this.state.imagem_name !== 'img_default.png') {
+            storage.ref("/").child(this.state.imagem_name).delete();
+            this.setState({ 
+                url_imagem: 'https://firebasestorage.googleapis.com/v0/b/app-scriptsky-com-br.appspot.com/o/img_default.png?alt=media', 
+                imagem_name: 'img_default.png' 
+            });
+        }
+    }
+
     handleChangeImage = (event) => {
-        
         const imagem = event.target.files[0]
         
         if(imagem){
@@ -89,14 +100,16 @@ export default class ProdutoCadastro extends Component {
             const mseg    = data.getMilliseconds();
             const hora_format = `${ hora }${ min }${ seg }${ mseg }`;
 
+            //Codificacao
+            const codificacao = data_format+hora_format;
+
             //Caso o cliente queira fazer upload de outra imagem o sistema remove a ultima imagem upada no storage
-            if(this.state.imagem_name) {
+            if(this.state.imagem_name !== 'img_default.png') {
                 storage.ref("/").child(this.state.imagem_name).delete();
-                //console.log(this.state.imagem_name)
             }
             
             //Realizando upload da imagem no storage
-            const uploadTask = storage.ref(`/${ data_format }${ hora_format }${ imagem.name }`).put(imagem);
+            const uploadTask = storage.ref(`/${ codificacao }${ imagem.name }`).put(imagem);
             uploadTask.on(
                 "state_changed",
                 snapshot => {},
@@ -106,95 +119,128 @@ export default class ProdutoCadastro extends Component {
                 () => {
                     storage
                     .ref("/")
-                    .child(`${ data_format }${ hora_format }${ imagem.name }`)
+                    .child(`${ codificacao }${ imagem.name }`)
                     .getDownloadURL()
                     .then(url => {
-                        //console.log(url);
-                        this.setState({ url_imagem: url, imagem_name: `${ data_format }${ hora_format }${ imagem.name }` })
+                        this.setState({ url_imagem: url, imagem_name: `${ codificacao }${ imagem.name }` })
                     });
                 }
             ); 
-
         }
+    }
+
+    salvar = () => {
+        const produto = {
+            cod_produto_grupo: this.state.grupo,
+            imagem: this.state.imagem_name,
+            titulo: this.state.titulo,
+            descricao: this.state.descricao,
+            preco: this.state.preco,
+            desconto: 0,
+            situacao: this.state.situacao
+        }
+
+        if(produto.cod_produto_grupo !== '' & 
+           produto.titulo !== '' & 
+           produto.descricao !== '' & 
+           produto.preco !== '' & 
+           produto.situacao !== '') 
+        {
+            console.log(produto.titulo)  
+        } else {
+            this.setState({ alerta: <AlertaPreechaTodoFurmulario /> });
+            setTimeout(this.setState({ alerta: '' }), 6000, 'limpaAlerta');
+        }    
     }
 
     render() {
 
-        const { url_imagem, grupos, grupo, situacoes, situacao } = this.state;
+        const { url_imagem, grupos, grupo, situacoes, situacao, alerta } = this.state;
 
         return (
 
             <div>
-                <Card>
-                    <CardActionArea>
-                        <CardMedia>
-                            <img src={ url_imagem } alt="Imagem do Produto" style={{ width: '100%' }} />
-                        </CardMedia>
-                    </CardActionArea>
+                <Card elevation={3}> 
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">
                             Cadastro Produto
                         </Typography>
                         <Grid container spacing={2}>
-                            <Grid item xs={10}>
-                                <TextField type="text" id="titulo" label="Titulo" onChange={ this.cadastra } required fullWidth/>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <input type="file"  accept="image/*" style={{ display: 'none' }} id="files" onChange={ this.handleChangeImage }/>
+                            <Grid item sm={4} xs={12}>
+                                <CardActionArea>
+                                    <CardMedia>
+                                        <img src={ url_imagem } alt="Imagem do Produto" style={{ width: '100%' }} />
+                                    </CardMedia>
+                                </CardActionArea>
+                                <input  
+                                       type="file"
+                                       id="files" 
+                                       accept="image/*" 
+                                       style={{ display: 'none' }} 
+                                       onChange={ this.handleChangeImage } 
+                                />
                                 <label htmlFor="files">
                                     <IconButton color="primary" aria-label="Upload de Imagem" component="span">
-                                        <PhotoCamera />
+                                        <PhotoCameraIcon />
                                     </IconButton>
-                                </label>
+                                </label> 
+                                <IconButton color="primary" onClick={ this.removeImagem } aria-label="Remove Imagem" component="span">
+                                    <RemoveIcon />
+                                </IconButton>
                             </Grid>
-                            <Grid item xs={12}>
-                                <TextField type="text" id="descricao" label="Descrição" onChange={ this.cadastra } multiline rowsMax={2} fullWidth/>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <TextField type="text" id="preco" label="Preço" placeholder="0.00" required fullWidth/>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <FormControl required fullWidth>
-                                    <InputLabel>Grupo de Produtos</InputLabel>
-                                    <Select value={ grupo } onChange={ this.setGrupo } >
-                                        {
-                                            grupos.map(grupos => (
-                                                <MenuItem value={ grupos.cod_produto_grupo } key={ grupos.cod_produto_grupo }>
-                                                    { grupos.titulo }
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <FormControl required fullWidth>
-                                    <InputLabel>Situação</InputLabel>
-                                    <Select value={ situacao } onChange={ this.setSituacao } >
-                                        {
-                                            situacoes.map(situacoes => (
-                                                <MenuItem value={ situacoes.cod_situacao } key={ situacoes.cod_situacao }>
-                                                    { situacoes.titulo }
-                                                </MenuItem>
-                                            ))
-                                        }
-                                    </Select>
-                                </FormControl>
+                            <Grid item sm={8} xs={12}>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={8}>
+                                        <TextField type="text" id="titulo" label="Titulo" onChange={ this.setTitulo } required fullWidth/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <FormControl required fullWidth>
+                                            <InputLabel>Situação</InputLabel>
+                                            <Select value={ situacao } onChange={ this.setSituacao } >
+                                                {situacoes.map(situacoes => (
+                                                    <MenuItem value={ situacoes.cod_situacao } key={ situacoes.cod_situacao }>
+                                                        { situacoes.titulo }
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField type="text" id="descricao" label="Descrição" onChange={ this.setDescricao } rowsMax={ 2 } multiline fullWidth/>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <TextField type="text" id="preco" label="Preço" placeholder="0.00" onChange={ this.setPreco } required fullWidth/>
+                                    </Grid>
+                                    <Grid item xs={8}>
+                                        <FormControl required fullWidth>
+                                            <InputLabel>Grupo de Produtos</InputLabel>
+                                            <Select value={ grupo } onChange={ this.setGrupo } >
+                                                {grupos.map(grupos => (
+                                                    <MenuItem value={ grupos.cod_produto_grupo } key={ grupos.cod_produto_grupo }>
+                                                        { grupos.titulo }
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Grid>  
                     </CardContent>
-                    <br />
                     <CardActions>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Button type="buttom" variant="contained" color="primary" onClick={ this.cadastra } fullWidth>
-                                    Cadastrar
-                                </Button>
-                            </Grid>
-                        </Grid>
+                        <Button 
+                            type="buttom" 
+                            variant="contained" 
+                            color="primary" 
+                            style={{ marginLeft: 'auto' }} 
+                            onClick={ this.salvar }
+                        >
+                            Salvar
+                        </Button>   
                     </CardActions>
                 </Card> 
-
+                
+                { alerta }
             </div>
 
         )
