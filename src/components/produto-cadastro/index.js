@@ -141,15 +141,17 @@ export default class ProdutoCadastro extends Component {
         }
 
         if(produto.cod_produto_grupo !== '' & 
-           produto.titulo !== '' & 
-           produto.descricao !== '' & 
+           produto.titulo !== '' &  
            produto.preco !== '' & 
-           produto.situacao !== '') 
-        {
+           produto.situacao !== ''
+        ) {
             console.log(produto.titulo)  
         } else {
-            this.setState({ alerta: <AlertaPreechaTodoFurmulario /> });
-            setTimeout(this.setState({ alerta: '' }), 6000, 'limpaAlerta');
+            if(this.state.alerta !== '') {
+                this.setState({ alerta: '' })
+            } else {
+                this.setState({ alerta: <AlertaPreechaTodoFurmulario /> });
+            } 
         }    
     }
 
