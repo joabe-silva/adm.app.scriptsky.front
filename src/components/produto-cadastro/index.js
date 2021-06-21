@@ -16,6 +16,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import AlertaPreechaTodoFurmulario from '../alertas/preencha-todo-formulario';
+import AlertaProdutoCadastradoComSucesso from '../alertas/produto-cadastrado-com-sucesso';
 import storage from '../../services/firebase';
 import api from '../../services/api';
 
@@ -61,15 +62,18 @@ export default class ProdutoCadastro extends Component {
     }
 
     setTitulo = (event) => {
-        this.setState({ titulo: event.target.value})
+        this.setState({ titulo: event.target.value });
     }
 
     setDescricao = (event) => {
-        this.setState({ descricao: event.target.value})
+        this.setState({ descricao: event.target.value });
     }
 
     setPreco = (event) => {
-        this.setState({ preco: event.target.value})
+        const preco = event.target.value
+        const newPreco = preco.replace(',', '.');
+
+        this.setState({ preco: newPreco });
     }
 
     removeImagem = () => {
@@ -145,7 +149,23 @@ export default class ProdutoCadastro extends Component {
            produto.preco !== '' & 
            produto.situacao !== ''
         ) {
-            console.log(produto.titulo)  
+            api.interceptors.request.use(
+                config => {
+                    config.headers['x-access-token'] = localStorage.getItem('tokenScriptsky');
+                    return config;
+                },
+                error => {
+                    return Promise.reject(error);
+                }
+            );
+
+            api.post('/cadastro-produto', produto).then(function (res) {
+              if(res.data === 'Token invalido! Favor fazer login novamente.') {
+                window.location.replace('/')
+              } 
+            });
+
+            this.setState({ alerta: <AlertaProdutoCadastradoComSucesso /> });
         } else {
             if(this.state.alerta !== '') {
                 this.setState({ alerta: '' })
