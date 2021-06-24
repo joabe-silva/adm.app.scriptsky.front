@@ -16,7 +16,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import AlertaPreechaTodoFurmulario from '../alertas/preencha-todo-formulario';
-import AlertaProdutoCadastradoComSucesso from '../alertas/produto-cadastrado-com-sucesso';
 import storage from '../../services/firebase';
 import api from '../../services/api';
 
@@ -161,11 +160,12 @@ export default class ProdutoCadastro extends Component {
 
             api.post('/cadastro-produto', produto).then(function (res) {
               if(res.data === 'Token invalido! Favor fazer login novamente.') {
-                window.location.replace('/')
-              } 
+                window.location.replace('/login')
+              } else {
+                window.location.replace('/')  
+              }
             });
 
-            this.setState({ alerta: <AlertaProdutoCadastradoComSucesso /> });
         } else {
             if(this.state.alerta !== '') {
                 this.setState({ alerta: '' })
