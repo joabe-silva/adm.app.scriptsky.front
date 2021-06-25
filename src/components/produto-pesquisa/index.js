@@ -5,50 +5,67 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import ArrowBack from '@material-ui/icons/ArrowBackIosRounded';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Fab from '@material-ui/core/Fab';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
 import api from '../../services/api';
 import './styles.css';
 
 export default class Itens extends Component {
 
   state = {
-    itens: [],
+    produtos: [],
     parametro: [],
+    grupos: [],
+    grupo: '',
+    pesquisa: '',
+  }
+
+  async componentDidMount(){
+    this.parametro();
+    this.grupos();
+  }
+
+  async parametro() {
+    const parametro = await api.get('/parametro');
+    this.setState({ parametro: parametro.data[0] });
   }
 
   async grupos() {
     const grupos = await api.get('/grupos');
-    this.setState({ grupos: grupos.data.rows });
+    this.setState({ grupos: grupos.data.rows, grupo: grupos.data.rows[0].cod_produto_grupo });
+
+    const produtos = await api.get(`/produtos-grupo/${ grupos.data.rows[0].cod_produto_grupo }`);
+    this.setState({ produtos: produtos.data.rows });
   }
-
-  async componentDidMount(){
-
-    /*const produtos = await api.get('/produtos-grupo/'+cod_produto_grupo);*/
-    const produtos = await api.get('/produtos');
-
-    const parametro = await api.get('/parametro');
-
-    this.setState({ itens: produtos.data.rows, parametro: parametro.data[0] });
-
+  
+  pesquisa = () => {
+    const produtos = api.get(`/produtos-grupo/${ this.state.grupo }`);
+    //this.setState({ produtos: produtos.data.rows });
+    console.log(produtos)
+  }
+  
+  setGrupo = (event) => {
+    this.setState({ grupo: event.target.value });
   }
 
   render(){
 
-    const { itens, grupos, parametro } = this.state;
+    const { produtos, grupos, grupo, parametro } = this.state;
 
     return (
       
       <div>
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
               <TextField type="text" id="pesquisa" label="Pesquisa..." onChange={ 0 } fullWidth/>
           </Grid>
-          <Grid item xs={6}>
-            <FormControl required fullWidth>
+          <Grid item xs={5}>
+            <FormControl fullWidth>
                 <InputLabel>Grupo de Produtos</InputLabel>
                 <Select value={ grupo } onChange={ this.setGrupo } >
                     {grupos.map(grupos => (
@@ -59,30 +76,49 @@ export default class Itens extends Component {
                 </Select>
             </FormControl>
           </Grid>
+          <Grid item xs={2}>
+            <Button 
+              type="buttom" 
+              variant="contained" 
+              color="primary" 
+              onClick={ this.pesquisa }
+            >
+              Pesquisa
+            </Button>
+          </Grid>
         </Grid>
 
         <List className="list">
           {
-            itens.map(itens => (
-
-              <Link 
-                to={`/item/${ itens.cod_produto }`} 
-                key={ itens.cod_produto } 
-                style={{ textDecoration: 'none', color: 'black', }}
-              >
+            produtos.map(produtos => (
+              <div>
                 <ListItem button className="itens">
                   <ListItemIcon className="imagemspc">
-                    <img src={`${ parametro.url_storage }${ itens.imagem }${ parametro.url_complet }`} alt={ itens.titulo } className="imagem" />
+                    <img src={`${ parametro.url_storage }${ produtos.imagem }${ parametro.url_complet }`} alt={ produtos.titulo } className="imagem" />
                   </ListItemIcon>
                   <ListItemText 
                       className="titulo"
-                      primary={ itens.titulo }
-                      secondary={`R$ ${ itens.preco }`}
+                      primary={ produtos.titulo }
+                      secondary={`R$ ${ produtos.preco }`}
                   />
+                  <ListItemIcon>
+                    <Link 
+                      to={`/produto-editar/${ produtos.cod_produto }`} 
+                      key={ produtos.cod_produto } 
+                      style={{ textDecoration: 'none', color: 'black', }}
+                    >
+                      <Button 
+                        type="buttom" 
+                        variant="contained" 
+                        color="primary" 
+                      >
+                        Editar
+                      </Button>
+                    </Link>
+                  </ListItemIcon>
                 </ListItem>
                 <Divider />
-              </Link>
-
+              </div>
             ))
           }
         </List>
