@@ -22,7 +22,7 @@ export default class Itens extends Component {
     parametro: [],
     grupos: [],
     grupo: '',
-    pesquisa: '',
+    titulo: '',
   }
 
   async componentDidMount(){
@@ -37,46 +37,74 @@ export default class Itens extends Component {
 
   async grupos() {
     const grupos = await api.get('/grupos');
-    this.setState({ grupos: grupos.data.rows, grupo: grupos.data.rows[0].cod_produto_grupo });
+    this.setState({ grupos: grupos.data.rows });
+  }
 
-    const produtos = await api.get(`/produtos-grupo/${ grupos.data.rows[0].cod_produto_grupo }`);
-    this.setState({ produtos: produtos.data.rows });
-  }
-  
-  pesquisa = () => {
-    const produtos = api.get(`/produtos-grupo/${ this.state.grupo }`);
-    //this.setState({ produtos: produtos.data.rows });
-    console.log(produtos)
-  }
-  
   setGrupo = (event) => {
     this.setState({ grupo: event.target.value });
   }
 
+  setTitulo = (event) => {
+    this.setState({ titulo: event.target.value });
+  }
+
+  pesquisa = () => {
+    if(this.state.titulo !== '' & this.state.grupo === '') { 
+      this.pesquisaPorTitulo() 
+    } else {
+      if(this.state.grupo !== '' & this.state.titulo === '') {
+        this.pesquisaPorGrupo()
+      } else {
+        if(this.state.grupo !== '' & this.state.titulo !== '') {
+          this.pesquisaPorTitulo() 
+        }
+      }
+    }
+  }
+
+  pesquisaPorTitulo = () => {
+    if(this.state.titulo !== '') {
+      const produto = {
+        titulo: this.state.titulo
+      }
+      api.post('/produto-pesquisa-por-titulo', produto).then(produtos => {
+        this.setState({ produtos: produtos.data.rows });
+      });
+    }
+  }
+
+  pesquisaPorGrupo = () => {
+    if(this.state.grupo !== '') {
+      api.get(`/produtos-grupo/${ this.state.grupo }`).then(produtos => {
+        this.setState({ produtos: produtos.data.rows });
+      });
+    } 
+  }
+
   render(){
 
-    const { produtos, grupos, grupo, parametro } = this.state;
+    const { produtos, grupos, grupo, titulo, parametro } = this.state;
 
     return (
       
       <div>
         <Grid container spacing={2}>
-          <Grid item xs={5}>
-              <TextField type="text" id="pesquisa" label="Pesquisa..." onChange={ 0 } fullWidth/>
+          <Grid item sm={5} xs={12}>
+            <TextField type="text" id="pesquisa" label="Pesquisa..." value={ titulo } onChange={ this.setTitulo } fullWidth/>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item sm={5} xs={8}>
             <FormControl fullWidth>
-                <InputLabel>Grupo de Produtos</InputLabel>
-                <Select value={ grupo } onChange={ this.setGrupo } >
-                    {grupos.map(grupos => (
-                        <MenuItem value={ grupos.cod_produto_grupo } key={ grupos.cod_produto_grupo }>
-                            { grupos.titulo }
-                        </MenuItem>
-                    ))}
-                </Select>
+              <InputLabel>Grupo de Produtos</InputLabel>
+              <Select value={ grupo } onChange={ this.setGrupo } >
+                {grupos.map(grupos => (
+                  <MenuItem value={ grupos.cod_produto_grupo } key={ grupos.cod_produto_grupo }>
+                    { grupos.titulo }
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item sm={2} xs={4}>
             <Button 
               type="buttom" 
               variant="contained" 
@@ -97,9 +125,9 @@ export default class Itens extends Component {
                     <img src={`${ parametro.url_storage }${ produtos.imagem }${ parametro.url_complet }`} alt={ produtos.titulo } className="imagem" />
                   </ListItemIcon>
                   <ListItemText 
-                      className="titulo"
-                      primary={ produtos.titulo }
-                      secondary={`R$ ${ produtos.preco }`}
+                    className="titulo"
+                    primary={ produtos.titulo }
+                    secondary={`R$ ${ produtos.preco }`}
                   />
                   <ListItemIcon>
                     <Link 
@@ -110,7 +138,7 @@ export default class Itens extends Component {
                       <Button 
                         type="buttom" 
                         variant="contained" 
-                        color="primary" 
+                        color="secondary" 
                       >
                         Editar
                       </Button>

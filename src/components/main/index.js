@@ -136,12 +136,14 @@ function Main(props) {
                   <ListItemText primary="Cadastro" />
                 </ListItem>
               </Link>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <SearchIcon />
-                </ListItemIcon>
-                <ListItemText primary="Pesquisa" />
-              </ListItem>
+              <Link href={'/produto-pesquisa'} style={{ textDecoration: 'none', color: 'black', }}>
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <SearchIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Pesquisa" />
+                </ListItem>
+              </Link>
             </List>
           </Collapse>
 
