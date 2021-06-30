@@ -4,6 +4,7 @@ import Dashboard from './components/dashboard';
 import PedidosPendente from './components/pedidos-pendente';
 import ProdutoCadastro from './components/produto-cadastro';
 import ProdutoPesquisa from './components/produto-pesquisa';
+import ProdutoEditar from './components/produto-editar';
 
 const Routes = () => (
     <BrowserRouter>
@@ -13,6 +14,7 @@ const Routes = () => (
             <Route path="/pedidos-pendente" component={ PedidosPendente } />
             <Route path="/produto-cadastro" component={ ProdutoCadastro } />
             <Route path="/produto-pesquisa" component={ ProdutoPesquisa } />
+            <Route path="/produto-editar/:cod_produto" component={ ProdutoEditar } />
         </Switch>
     </BrowserRouter>
 );

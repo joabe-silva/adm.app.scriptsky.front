@@ -4,6 +4,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -55,9 +56,7 @@ export default class Itens extends Component {
       if(this.state.grupo !== '' & this.state.titulo === '') {
         this.pesquisaPorGrupo()
       } else {
-        if(this.state.grupo !== '' & this.state.titulo !== '') {
-          this.pesquisaPorTitulo() 
-        }
+        this.pesquisaPorTitulo() 
       }
     }
   }
@@ -83,7 +82,7 @@ export default class Itens extends Component {
 
   render(){
 
-    const { produtos, grupos, grupo, titulo, parametro } = this.state;
+    const { produtos, grupos, grupo, titulo } = this.state;
 
     return (
       
@@ -116,14 +115,17 @@ export default class Itens extends Component {
           </Grid>
         </Grid>
 
-        <List className="list">
+        <List className="list"
+          subheader={
+            <ListSubheader component="div">
+              Produtos
+            </ListSubheader>
+          }
+        >
           {
             produtos.map(produtos => (
               <div>
                 <ListItem button className="itens">
-                  <ListItemIcon className="imagemspc">
-                    <img src={`${ parametro.url_storage }${ produtos.imagem }${ parametro.url_complet }`} alt={ produtos.titulo } className="imagem" />
-                  </ListItemIcon>
                   <ListItemText 
                     className="titulo"
                     primary={ produtos.titulo }
