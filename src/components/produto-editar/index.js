@@ -10,6 +10,8 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import RemoveIcon from '@material-ui/icons/RemoveCircleRounded';
+import ArrowBack from '@material-ui/icons/ArrowBackIosRounded';
+import Fab from '@material-ui/core/Fab';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -24,7 +26,7 @@ export default class ProdutoEditar extends Component {
 
     state = {
         grupos: [],
-        parametro: '',
+        parametro: [],
         situacoes: [{
             cod_situacao: 0,
             titulo: 'Ativo'
@@ -33,8 +35,8 @@ export default class ProdutoEditar extends Component {
             cod_situacao: 1,
             titulo: 'Inativo'
         }],
-        url_imagem: 'https://firebasestorage.googleapis.com/v0/b/app-scriptsky-com-br.appspot.com/o/img_default.png?alt=media',
-        imagem_name: 'img_default.png',
+        cod_produto: 0,
+        imagem: 'img_default.png',
         titulo: '',
         descricao: '',
         preco: 0,
@@ -47,23 +49,44 @@ export default class ProdutoEditar extends Component {
     componentDidMount(){
         this.grupos();
         this.produto();
+        this.parametro();
     }
 
     async produto() {
         const { cod_produto } = this.props.match.params;
         const produto = await api.get(`/produto/${ cod_produto }`);
-        this.setState({ 
-                        titulo: produto.data[0].titulo, 
-                        descricao: produto.data[0].descricao, 
-                        preco: produto.data[0].preco,
-                        grupo: produto.data[0].cod_produto_grupo,
-                        situacao: 0,
-                     });
+
+        if(produto.data[0].situacao === 'Ativo') {
+            this.setState({ 
+                cod_produto: produto.data[0].cod_produto,
+                imagem: produto.data[0].imagem, 
+                titulo: produto.data[0].titulo, 
+                descricao: produto.data[0].descricao, 
+                preco: produto.data[0].preco,
+                grupo: produto.data[0].cod_produto_grupo,
+                situacao: 0,
+            });
+        } else {
+            this.setState({ 
+                cod_produto: produto.data[0].cod_produto,
+                imagem: produto.data[0].imagem, 
+                titulo: produto.data[0].titulo, 
+                descricao: produto.data[0].descricao, 
+                preco: produto.data[0].preco,
+                grupo: produto.data[0].cod_produto_grupo,
+                situacao: 1,
+            });
+        } 
     }
 
     async grupos() {
         const grupos = await api.get('/grupos');
         this.setState({ grupos: grupos.data.rows });
+    }
+
+    async parametro() {
+        const parametro = await api.get('/parametro');
+        this.setState({ parametro: parametro.data[0] });
     }
 
     setGrupo = (event) => {
@@ -85,16 +108,14 @@ export default class ProdutoEditar extends Component {
     setPreco = (event) => {
         const preco = event.target.value
         const newPreco = preco.replace(',', '.');
-
         this.setState({ preco: newPreco });
     }
 
     removeImagem = () => {
-        if(this.state.imagem_name !== 'img_default.png') {
-            storage.ref("/").child(this.state.imagem_name).delete();
-            this.setState({ 
-                url_imagem: 'https://firebasestorage.googleapis.com/v0/b/app-scriptsky-com-br.appspot.com/o/img_default.png?alt=media', 
-                imagem_name: 'img_default.png' 
+        if(this.state.imagem !== 'img_default.png') {
+            storage.ref("/").child(this.state.imagem).delete();
+            this.setState({  
+                imagem: 'img_default.png' 
             });
         }
     }
@@ -121,8 +142,8 @@ export default class ProdutoEditar extends Component {
             const codificacao = data_format+hora_format;
 
             //Caso o cliente queira fazer upload de outra imagem o sistema remove a ultima imagem upada no storage
-            if(this.state.imagem_name !== 'img_default.png') {
-                storage.ref("/").child(this.state.imagem_name).delete();
+            if(this.state.imagem !== 'img_default.png') {
+                storage.ref("/").child(this.state.imagem).delete();
             }
             
             //Realizando upload da imagem no storage
@@ -139,17 +160,46 @@ export default class ProdutoEditar extends Component {
                     .child(`${ codificacao }${ imagem.name }`)
                     .getDownloadURL()
                     .then(url => {
-                        this.setState({ url_imagem: url, imagem_name: `${ codificacao }${ imagem.name }` })
+                        this.setState({ imagem: `${ codificacao }${ imagem.name }` })
                     });
                 }
             ); 
         }
     }
 
+    voltar = () => {
+        window.history.back();
+    }
+
+    deletar = () => {
+
+        if(this.state.imagem !== 'img_default.png') {
+            storage.ref("/").child(this.state.imagem).delete();
+        }
+        
+        api.interceptors.request.use(
+            config => {
+                config.headers['x-access-token'] = localStorage.getItem('tokenScriptsky');
+                return config;
+            },
+            error => {
+                return Promise.reject(error);
+            }
+        );
+
+        api.delete(`/deleta-produto/${ this.state.cod_produto }`).then(function (res) {
+          if(res.data === 'Token invalido! Favor fazer login novamente.') {
+            window.location.replace('/login');
+          } else {
+            window.location.replace('/produto-pesquisa');
+          }
+        });
+    }
+
     salvar = () => {
         const produto = {
             cod_produto_grupo: this.state.grupo,
-            imagem: this.state.imagem_name,
+            imagem: this.state.imagem,
             titulo: this.state.titulo,
             descricao: this.state.descricao,
             preco: this.state.preco,
@@ -172,17 +222,17 @@ export default class ProdutoEditar extends Component {
                 }
             );
 
-            api.post('/cadastro-produto', produto).then(function (res) {
+            api.put(`/editar-produto/${ this.state.cod_produto }`, produto).then(function (res) {
               if(res.data === 'Token invalido! Favor fazer login novamente.') {
-                window.location.replace('/login')
+                window.location.replace('/login');
               } else {
-                window.location.replace('/')  
+                window.location.replace('/produto-pesquisa');
               }
             });
 
         } else {
             if(this.state.alerta !== '') {
-                this.setState({ alerta: '' })
+                this.setState({ alerta: '' });
             } else {
                 this.setState({ alerta: <AlertaPreechaTodoFurmulario /> });
             } 
@@ -191,21 +241,26 @@ export default class ProdutoEditar extends Component {
 
     render() {
 
-        const { url_imagem, titulo, descricao, preco, grupos, grupo, situacoes, situacao, alerta } = this.state;
+        const { parametro, imagem, titulo, descricao, preco, grupos, grupo, situacoes, situacao, alerta } = this.state;
 
         return (
 
-            <div>
+            <div> 
+                <Fab size="small" color="primary" aria-label="add" onClick={ this.voltar }>
+                    <ArrowBack />
+                </Fab>
+                <br/><br/>
+
                 <Card elevation={3}> 
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">
-                            Cadastro Produto
+                            Edição do Produto
                         </Typography>
                         <Grid container spacing={2}>
                             <Grid item sm={4} xs={12}>
                                 <CardActionArea>
                                     <CardMedia>
-                                        <img src={ url_imagem } alt="Imagem do Produto" style={{ width: '100%' }} />
+                                        <img src={`${ parametro.url_storage }${ imagem }${ parametro.url_complet }`} alt="Imagem do Produto" style={{ width: '100%' }} />
                                     </CardMedia>
                                 </CardActionArea>
                                 <input  
@@ -264,15 +319,27 @@ export default class ProdutoEditar extends Component {
                         </Grid>  
                     </CardContent>
                     <CardActions>
-                        <Button 
-                            type="buttom" 
-                            variant="contained" 
-                            color="primary" 
-                            style={{ marginLeft: 'auto' }} 
-                            onClick={ this.salvar }
-                        >
-                            Salvar
-                        </Button>   
+                        <div  style={{ marginLeft: 'auto' }} >
+                            <Button 
+                                type="buttom" 
+                                variant="contained" 
+                                color="secondary"  
+                                onClick={ this.deletar }
+                                style={{ margin: '10px' }}
+                            >
+                                Deletar
+                            </Button> 
+                            <Button 
+                                type="buttom" 
+                                variant="contained" 
+                                color="primary" 
+                                onClick={ this.salvar }
+                                style={{ margin: '10px' }}
+                            >
+                                Salvar
+                            </Button>
+                        </div>
+                           
                     </CardActions>
                 </Card> 
                 

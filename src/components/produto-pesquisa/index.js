@@ -63,10 +63,7 @@ export default class Itens extends Component {
 
   pesquisaPorTitulo = () => {
     if(this.state.titulo !== '') {
-      const produto = {
-        titulo: this.state.titulo
-      }
-      api.post('/produto-pesquisa-por-titulo', produto).then(produtos => {
+      api.get(`/produto-pesquisa-por-titulo/${ this.state.titulo }`).then(produtos => {
         this.setState({ produtos: produtos.data.rows });
       });
     }
@@ -74,7 +71,7 @@ export default class Itens extends Component {
 
   pesquisaPorGrupo = () => {
     if(this.state.grupo !== '') {
-      api.get(`/produtos-grupo/${ this.state.grupo }`).then(produtos => {
+      api.get(`/produtos-grupo/${ this.state.grupo }?situacao=${ 2 }`).then(produtos => {
         this.setState({ produtos: produtos.data.rows });
       });
     } 
@@ -129,7 +126,7 @@ export default class Itens extends Component {
                   <ListItemText 
                     className="titulo"
                     primary={ produtos.titulo }
-                    secondary={`R$ ${ produtos.preco }`}
+                    secondary={`R$ ${ produtos.preco } Situação: ${ produtos.situacao }`}
                   />
                   <ListItemIcon>
                     <Link 

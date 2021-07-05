@@ -160,9 +160,9 @@ export default class ProdutoCadastro extends Component {
 
             api.post('/cadastro-produto', produto).then(function (res) {
               if(res.data === 'Token invalido! Favor fazer login novamente.') {
-                window.location.replace('/login')
+                window.location.replace('/login');
               } else {
-                window.location.replace('/')  
+                window.location.replace('/produto-cadastro');
               }
             });
 
