@@ -95,24 +95,12 @@ function Main(props) {
                   <ListItemIcon>
                     <HourglassEmptyIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Pendente" />
+                  <ListItemText primary="Criar Pedido" />
                 </ListItem>
               </Link>
               <ListItem button className={classes.nested}>
                 <ListItemIcon>
                   <AccessTimeIcon />
-                </ListItemIcon>
-                <ListItemText primary="Em andamento" />
-              </ListItem>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <CheckIcon />
-                </ListItemIcon>
-                <ListItemText primary="Concluídos" />
-              </ListItem>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <SearchIcon />
                 </ListItemIcon>
                 <ListItemText primary="Pesquisa" />
               </ListItem>
@@ -156,18 +144,22 @@ function Main(props) {
           </ListItem>
           <Collapse in={openGrupoProdutos} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <AddIcon />
-                </ListItemIcon>
-                <ListItemText primary="Cadastro" />
-              </ListItem>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <SearchIcon />
-                </ListItemIcon>
-                <ListItemText primary="Pesquisa" />
-              </ListItem>
+              <Link href={'/grupo-cadastro'} style={{ textDecoration: 'none', color: 'black', }}>
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <AddIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Cadastro" />
+                </ListItem>
+              </Link>
+              <Link href={'/grupo-pesquisa'} style={{ textDecoration: 'none', color: 'black', }}>
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <SearchIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Pesquisa" />
+                </ListItem>
+              </Link>
             </List>
           </Collapse>
 

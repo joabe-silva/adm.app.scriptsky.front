@@ -9,31 +9,18 @@ import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
 import api from '../../services/api';
 import './styles.css';
 
-export default class ProdutoPesquisa extends Component {
+export default class GrupoPesquisa extends Component {
 
   state = {
-    produtos: [],
-    parametro: [],
     grupos: [],
-    grupo: '',
     titulo: '',
   }
 
   async componentDidMount(){
-    this.parametro();
     this.grupos();
-  }
-
-  async parametro() {
-    const parametro = await api.get('/parametro');
-    this.setState({ parametro: parametro.data[0] });
   }
 
   async grupos() {
@@ -41,24 +28,8 @@ export default class ProdutoPesquisa extends Component {
     this.setState({ grupos: grupos.data.rows });
   }
 
-  setGrupo = (event) => {
-    this.setState({ grupo: event.target.value });
-  }
-
   setTitulo = (event) => {
     this.setState({ titulo: event.target.value });
-  }
-
-  pesquisa = () => {
-    if(this.state.titulo !== '' & this.state.grupo === '') { 
-      this.pesquisaPorTitulo() 
-    } else {
-      if(this.state.grupo !== '' & this.state.titulo === '') {
-        this.pesquisaPorGrupo()
-      } else {
-        this.pesquisaPorTitulo() 
-      }
-    }
   }
 
   pesquisaPorTitulo = () => {
@@ -69,43 +40,23 @@ export default class ProdutoPesquisa extends Component {
     }
   }
 
-  pesquisaPorGrupo = () => {
-    if(this.state.grupo !== '') {
-      api.get(`/produtos-grupo/${ this.state.grupo }?situacao=${ 2 }`).then(produtos => {
-        this.setState({ produtos: produtos.data.rows });
-      });
-    } 
-  }
-
   render(){
 
-    const { produtos, grupos, grupo, titulo } = this.state;
+    const { grupos, titulo } = this.state;
 
     return (
       
       <div>
         <Grid container spacing={2}>
-          <Grid item sm={5} xs={12}>
+          <Grid item sm={9} xs={9}>
             <TextField type="text" id="pesquisa" label="Pesquisa..." value={ titulo } onChange={ this.setTitulo } fullWidth/>
           </Grid>
-          <Grid item sm={5} xs={8}>
-            <FormControl fullWidth>
-              <InputLabel>Grupo de Produtos</InputLabel>
-              <Select value={ grupo } onChange={ this.setGrupo } >
-                {grupos.map(grupos => (
-                  <MenuItem value={ grupos.cod_produto_grupo } key={ grupos.cod_produto_grupo }>
-                    { grupos.titulo }
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item sm={2} xs={4}>
+          <Grid item sm={3} xs={3}>
             <Button 
               type="buttom" 
               variant="contained" 
               color="primary" 
-              onClick={ this.pesquisa }
+              onClick={ this.pesquisaPorTitulo }
             >
               Pesquisa
             </Button>
@@ -115,23 +66,23 @@ export default class ProdutoPesquisa extends Component {
         <List className="list"
           subheader={
             <ListSubheader component="div">
-              Produtos
+              Grupos de Produtos
             </ListSubheader>
           }
         >
           {
-            produtos.map(produtos => (
+            grupos.map(grupos => (
               <div>
                 <ListItem button className="itens">
                   <ListItemText 
                     className="titulo"
-                    primary={ produtos.titulo }
-                    secondary={`R$ ${ produtos.preco } Situação: ${ produtos.situacao }`}
+                    primary={ grupos.titulo }
+                    secondary={`Sequencia: ${ grupos.sequencia } Situação: ${ grupos.situacao }`}
                   />
                   <ListItemIcon>
                     <Link 
-                      to={`/produto-editar/${ produtos.cod_produto }`} 
-                      key={ produtos.cod_produto } 
+                      to={`/grupo-editar/${ grupos.cod_produto_grupo }`} 
+                      key={ grupos.cod_produto_grupo } 
                       style={{ textDecoration: 'none', color: 'black', }}
                     >
                       <Button 
