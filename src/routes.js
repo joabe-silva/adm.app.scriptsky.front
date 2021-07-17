@@ -7,6 +7,7 @@ import ProdutoPesquisa from './components/produto-pesquisa';
 import ProdutoEditar from './components/produto-editar';
 import GrupoCadastro from './components/grupo-cadastro';
 import GrupoPesquisa from './components/grupo-pesquisa';
+import GrupoEditar from './components/grupo-editar';
 
 const Routes = () => (
     <BrowserRouter>
@@ -19,6 +20,7 @@ const Routes = () => (
             <Route path="/produto-editar/:cod_produto" component={ ProdutoEditar } />
             <Route path="/grupo-cadastro" component={ GrupoCadastro } />
             <Route path="/grupo-pesquisa" component={ GrupoPesquisa } />
+            <Route path="/grupo-editar/:cod_grupo" component={ GrupoEditar } />
         </Switch>
     </BrowserRouter>
 );

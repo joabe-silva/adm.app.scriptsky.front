@@ -16,11 +16,7 @@ export default class GrupoPesquisa extends Component {
 
   state = {
     grupos: [],
-    titulo: '',
-  }
-
-  async componentDidMount(){
-    this.grupos();
+    titulo: 'Todos',
   }
 
   async grupos() {
@@ -32,11 +28,13 @@ export default class GrupoPesquisa extends Component {
     this.setState({ titulo: event.target.value });
   }
 
-  pesquisaPorTitulo = () => {
+  pesquisa = () => {
     if(this.state.titulo !== '') {
-      api.get(`/produto-pesquisa-por-titulo/${ this.state.titulo }`).then(produtos => {
-        this.setState({ produtos: produtos.data.rows });
+      api.get(`/grupo-pesquisa-por-titulo/${ this.state.titulo }`).then(grupos => {
+        this.setState({ grupos: grupos.data.rows });
       });
+    } else {
+      this.grupos();
     }
   }
 
@@ -56,7 +54,7 @@ export default class GrupoPesquisa extends Component {
               type="buttom" 
               variant="contained" 
               color="primary" 
-              onClick={ this.pesquisaPorTitulo }
+              onClick={ this.pesquisa }
             >
               Pesquisa
             </Button>
