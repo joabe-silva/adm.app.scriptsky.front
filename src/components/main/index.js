@@ -20,9 +20,6 @@ import DashboardIcon from '@material-ui/icons/DashboardRounded';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoneyRounded';
 import AddIcon from '@material-ui/icons/AddRounded';
 import SearchIcon from '@material-ui/icons/SearchRounded';
-import CheckIcon from '@material-ui/icons/CheckCircleOutlineRounded';
-import HourglassEmptyIcon from '@material-ui/icons/HourglassEmptyRounded';
-import AccessTimeIcon from '@material-ui/icons/AccessTimeRounded';
 import CategoryIcon from '@material-ui/icons/CategoryRounded';
 import AccountTreeIcon from '@material-ui/icons/AccountTreeRounded';
 import PostIcon from '@material-ui/icons/PostAddRounded';
@@ -90,20 +87,22 @@ function Main(props) {
           </ListItem>
           <Collapse in={openPedidos} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <Link href={'/pedidos-pendente'} style={{ textDecoration: 'none', color: 'black', }}>
+              <Link href={'/criar-pedido'} style={{ textDecoration: 'none', color: 'black', }}>
                 <ListItem button className={classes.nested}>
                   <ListItemIcon>
-                    <HourglassEmptyIcon />
+                    <AddIcon />
                   </ListItemIcon>
                   <ListItemText primary="Criar Pedido" />
                 </ListItem>
               </Link>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon>
-                  <AccessTimeIcon />
-                </ListItemIcon>
-                <ListItemText primary="Pesquisa" />
-              </ListItem>
+              <Link href={'/pedidos'} style={{ textDecoration: 'none', color: 'black', }}>
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <SearchIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Pesquisa" />
+                </ListItem>
+              </Link>
             </List>
           </Collapse>
 

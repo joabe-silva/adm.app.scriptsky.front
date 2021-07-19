@@ -52,26 +52,15 @@ export default class GrupoEditar extends Component {
     async grupo() {
         const { cod_grupo } = this.props.match.params;
         const grupo = await api.get(`/grupo/${ cod_grupo }`);
-
-        if(grupo.data[0].situacao === 'Ativo') {
-            this.setState({ 
-                cod_produto_grupo: grupo.data[0].cod_produto_grupo,
-                imagem: grupo.data[0].imagem, 
-                titulo: grupo.data[0].titulo, 
-                descricao: grupo.data[0].descricao, 
-                sequencia: grupo.data[0].sequencia,
-                situacao: 0,
-            });
-        } else {
-            this.setState({ 
-                cod_produto_grupo: grupo.data[0].cod_produto_grupo,
-                imagem: grupo.data[0].imagem, 
-                titulo: grupo.data[0].titulo, 
-                descricao: grupo.data[0].descricao, 
-                sequencia: grupo.data[0].sequencia,
-                situacao: 1,
-            });
-        } 
+        
+        this.setState({ 
+            cod_produto_grupo: grupo.data[0].cod_produto_grupo,
+            imagem: grupo.data[0].imagem, 
+            titulo: grupo.data[0].titulo, 
+            descricao: grupo.data[0].descricao, 
+            sequencia: grupo.data[0].sequencia,
+            situacao: grupo.data[0].situacao,
+        });
     }
 
     async parametro() {
