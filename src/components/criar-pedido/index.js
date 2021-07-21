@@ -79,15 +79,12 @@ export default class Pedidos extends Component {
 
   render(){
 
-    const { produtos, grupos, grupo, titulo } = this.state;
+    const { produtos, grupos, grupo, titulo, parametro } = this.state;
 
     return (
       
       <div>
         <Grid container spacing={2}>
-          <Grid item sm={12} xs={12}>
-            <TextField type="text" id="cliente" label="Cliente" value={ 'Joabe' } fullWidth/>
-          </Grid>
           <Grid item sm={5} xs={12}>
             <TextField type="text" id="pesquisa" label="Pesquisa..." value={ titulo } onChange={ this.setTitulo } fullWidth/>
           </Grid>
@@ -125,28 +122,22 @@ export default class Pedidos extends Component {
           {
             produtos.map(produtos => (
               <div>
-                <ListItem button className="itens">
-                  <ListItemText 
-                    className="titulo"
-                    primary={ produtos.titulo }
-                    secondary={`R$ ${ produtos.preco } Situação: ${ produtos.situacao }`}
-                  />
-                  <ListItemIcon>
-                    <Link 
-                      to={`/produto-editar/${ produtos.cod_produto }`} 
-                      key={ produtos.cod_produto } 
-                      style={{ textDecoration: 'none', color: 'black', }}
-                    >
-                      <Button 
-                        type="buttom" 
-                        variant="contained" 
-                        color="secondary" 
-                      >
-                        Adicionar
-                      </Button>
-                    </Link>
-                  </ListItemIcon>
-                </ListItem>
+                <Link 
+                  to={`/item/${ produtos.cod_produto }`} 
+                  key={ produtos.cod_produto } 
+                  style={{ textDecoration: 'none', color: 'black', }}
+                >
+                  <ListItem button className="itens">
+                    <ListItemIcon className="imagemspc">
+                      <img src={`${ parametro.url_storage }${ produtos.imagem }${ parametro.url_complet }`} alt={ produtos.titulo } className="imagem" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      className="titulo"
+                      primary={ produtos.titulo }
+                      secondary={`R$ ${ produtos.preco }`}
+                    /> 
+                  </ListItem>
+                </Link>
                 <Divider />
               </div>
             ))

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Dashboard from './components/dashboard';
 import CriarPedido from './components/criar-pedido';
+import Item from './components/item';
 import Pedidos from './components/pedidos';
 import ProdutoCadastro from './components/produto-cadastro';
 import ProdutoPesquisa from './components/produto-pesquisa';
@@ -16,6 +17,7 @@ const Routes = () => (
             <Route exact path="/" component={ Dashboard } />
             <Route path="/dashboard" component={ Dashboard } />
             <Route path="/criar-pedido" component={ CriarPedido } />
+            <Route path="/item/:cod_produto" component={ Item } />
             <Route path="/pedidos" component={ Pedidos } />
             <Route path="/produto-cadastro" component={ ProdutoCadastro } />
             <Route path="/produto-pesquisa" component={ ProdutoPesquisa } />
