@@ -28,6 +28,7 @@ import StoreIcon from '@material-ui/icons/StorefrontRounded';
 import SettingsIcon from '@material-ui/icons/SettingsRounded';
 import AccountCircledIcon from '@material-ui/icons/AccountCircleRounded';
 import ExitToAppIcon from '@material-ui/icons/ExitToAppRounded';
+import CartIcon from '@material-ui/icons/ShoppingCartRounded';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -93,6 +94,14 @@ function Main(props) {
                     <AddIcon />
                   </ListItemIcon>
                   <ListItemText primary="Criar Pedido" />
+                </ListItem>
+              </Link>     
+              <Link href={'/carrinho'} style={{ textDecoration: 'none', color: 'black', }}>
+                <ListItem button className={classes.nested}>
+                  <ListItemIcon>
+                    <CartIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Carrinho" />
                 </ListItem>
               </Link>
               <Link href={'/pedidos'} style={{ textDecoration: 'none', color: 'black', }}>
@@ -236,7 +245,7 @@ function Main(props) {
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
+            aria-label="menu"
             edge="start"
             onClick={handleDrawerToggle}
             className={classes.menuButton}

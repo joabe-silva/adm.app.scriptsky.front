@@ -16,7 +16,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import api from '../../services/api';
 import './styles.css';
 
-export default class Pedidos extends Component {
+export default class CriarPedido extends Component {
 
   state = {
     produtos: [],

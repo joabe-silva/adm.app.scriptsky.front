@@ -84,16 +84,18 @@ export default class Item extends Component {
     const { item, parametro, quantidade, valorUnitario } = this.state;
 
     return (
+
         <div>
             <Fab onClick={ this.voltar } style={{ right: '20px' }} size="small" color="primary" aria-label="add">
               <ArrowBack />
             </Fab>
+            
             <Card className="card" elevation={0}>
                 <CardActionArea>
                     <Grid container spacing={2}>
                         <Grid item sm={4} xs={12}>
                             <CardMedia>
-                                <img src={ parametro.url_storage+item.imagem+parametro.url_complet } alt={ item.titulo } className="imagem" />
+                                <img src={`${ parametro.url_storage }${ item.imagem }${ parametro.url_complet }`} alt={ item.titulo } className="imagem" />
                             </CardMedia>
                         </Grid>
                         <Grid item sm={4} xs={12}>
@@ -144,7 +146,6 @@ export default class Item extends Component {
                 </CardActions> 
             </Card>  
       </div>
-      
     )
 
   }

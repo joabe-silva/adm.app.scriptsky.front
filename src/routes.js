@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Dashboard from './components/dashboard';
+import Carrinho from './components/carrinho';
 import CriarPedido from './components/criar-pedido';
 import Item from './components/item';
 import Pedidos from './components/pedidos';
@@ -16,6 +17,7 @@ const Routes = () => (
         <Switch>
             <Route exact path="/" component={ Dashboard } />
             <Route path="/dashboard" component={ Dashboard } />
+            <Route path="/carrinho" component={ Carrinho } />
             <Route path="/criar-pedido" component={ CriarPedido } />
             <Route path="/item/:cod_produto" component={ Item } />
             <Route path="/pedidos" component={ Pedidos } />
