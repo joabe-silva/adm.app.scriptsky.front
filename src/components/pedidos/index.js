@@ -19,26 +19,20 @@ import './styles.css';
 export default class Pedidos extends Component {
 
   state = {
-    produtos: [],
-    parametro: [],
-    grupos: [],
-    grupo: '',
+    pedidos: [],
+    formasPagamento: [],
+    formaPagamento: '',
     titulo: '',
+    situacao: 0,
   }
 
   async componentDidMount(){
-    this.parametro();
-    this.grupos();
+    this.formasPagamento();
   }
 
-  async parametro() {
-    const parametro = await api.get('/parametro');
-    this.setState({ parametro: parametro.data[0] });
-  }
-
-  async grupos() {
-    const grupos = await api.get('/grupos');
-    this.setState({ grupos: grupos.data.rows });
+  async formasPagameto() {
+    const formasPagamento = await api.get('/parametro-formas-pagamento');
+    this.setState({ formasPagamento: formasPagamento.data.rows });
   }
 
   setGrupo = (event) => {
@@ -54,9 +48,9 @@ export default class Pedidos extends Component {
       this.pesquisaPorTitulo() 
     } else {
       if(this.state.grupo !== '' & this.state.titulo === '') {
-        this.pesquisaPorGrupo()
+        this.pesquisaPorSituacao()
       } else {
-        this.pesquisaPorTitulo() 
+        this.pesquisaPorSituacao() 
       }
     }
   }
@@ -69,9 +63,9 @@ export default class Pedidos extends Component {
     }
   }
 
-  pesquisaPorGrupo = () => {
+  pesquisaPorSituacao = () => {
     if(this.state.grupo !== '') {
-      api.get(`/produtos-grupo/${ this.state.grupo }?situacao=${ 2 }`).then(produtos => {
+      api.get(`/pedidos/${ this.state.situacao }`).then(produtos => {
         this.setState({ produtos: produtos.data.rows });
       });
     } 
