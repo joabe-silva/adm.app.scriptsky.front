@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
+import { KeyboardDatePicker,} from '@material-ui/pickers';
+
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
@@ -26,7 +25,21 @@ export default class Pedidos extends Component {
 
   state = {
     pedidos: [],
+    situacoes: [{
+      cod_situacao: 0,
+      descricao: 'Pendente'
+    },
+    {
+      cod_situacao: 1,
+      descricao: 'Em andamento'
+    },
+    {
+      cod_situacao: 2,
+      descricao: 'Concluído'
+    }],
     situacao: 0,
+    data_inicio: new Date('2014-08-18T21:11:54'),
+    data_fim: ''
   }
 
   async componentDidMount(){
@@ -53,6 +66,17 @@ export default class Pedidos extends Component {
     }
   }
 
+  setSituacao = (event) => {
+    this.setState({ situacao: event.target.value });
+  }
+
+  setDataInicial = (event) => {
+    this.setState({ data_inicial: event.target.value });
+  }
+
+  setDataFim = (event) => {
+    this.setState({ data_fim: event.target.value });
+  }
   /* 
   pesquisaPorSituacao = () => {
     if(this.state.grupo !== '') {
@@ -65,26 +89,38 @@ export default class Pedidos extends Component {
 
   render(){
 
-    const { pedidos } = this.state;
+    const { pedidos, situacoes, situacao, data_inicio } = this.state;
 
     return (
       
       <div>
-        {/* <Grid container spacing={2}>
+        <Grid container spacing={2}>
           <Grid item sm={5} xs={12}>
-            <TextField type="text" id="pesquisa" label="Pesquisa..." value={ titulo } onChange={ this.setTitulo } fullWidth/>
+            <KeyboardDatePicker
+              disableToolbar
+              variant="inline"
+              format="MM/dd/yyyy"
+              margin="normal"
+              id="date-picker-inline"
+              label="Date picker inline"
+              value={ data_inicio }
+              //onChange={'handleDateChange'}
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+            }}
+        />
           </Grid>
           <Grid item sm={5} xs={8}>
             <FormControl fullWidth>
               <InputLabel>Grupo de Produtos</InputLabel>
-              <Select value={ grupo } onChange={ this.setGrupo } >
-                {grupos.map(grupos => (
-                  <MenuItem value={ grupos.cod_produto_grupo } key={ grupos.cod_produto_grupo }>
-                    { grupos.titulo }
+              <Select value={ situacao } onChange={ this.setSituacao } >
+                {situacoes.map(situacoes => (
+                  <MenuItem value={ situacoes.cod_situacao } key={ situacoes.cod_situacao }>
+                    { situacoes.descricao }
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl>
+            </FormControl> 
           </Grid>
           <Grid item sm={2} xs={4}>
             <Button 
@@ -96,7 +132,7 @@ export default class Pedidos extends Component {
               Pesquisa
             </Button>
           </Grid>
-        </Grid> */}
+        </Grid> 
 
         <List className="list"
           subheader={
