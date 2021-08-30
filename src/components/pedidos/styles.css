@@ -16,5 +16,19 @@
 .titulo {
     margin-left: 20px;
 }
-  
+.pedidos {
+    margin-bottom: 5px;
+}
+.pedido-situacao {
+    text-align: center;
+    border-radius: 5px;
+    color: #fff;
+    background-color: darkorange;
+}
+.pedido-icon {
+    margin-left: 50%;
+    border-radius: 50%;
+    color: #fff;
+    background-color: darkorange; 
+}
   

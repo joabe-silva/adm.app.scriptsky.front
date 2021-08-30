@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -7,8 +11,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
+import ArrowIcon from '@material-ui/icons/ArrowForwardIosRounded';
+
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -20,65 +26,51 @@ export default class Pedidos extends Component {
 
   state = {
     pedidos: [],
-    formasPagamento: [],
-    formaPagamento: '',
-    titulo: '',
     situacao: 0,
   }
 
   async componentDidMount(){
-    this.formasPagamento();
+    this.pedidos();
   }
 
-  async formasPagameto() {
-    const formasPagamento = await api.get('/parametro-formas-pagamento');
-    this.setState({ formasPagamento: formasPagamento.data.rows });
-  }
-
-  setGrupo = (event) => {
-    this.setState({ grupo: event.target.value });
-  }
-
-  setTitulo = (event) => {
-    this.setState({ titulo: event.target.value });
-  }
-
-  pesquisa = () => {
-    if(this.state.titulo !== '' & this.state.grupo === '') { 
-      this.pesquisaPorTitulo() 
-    } else {
-      if(this.state.grupo !== '' & this.state.titulo === '') {
-        this.pesquisaPorSituacao()
-      } else {
-        this.pesquisaPorSituacao() 
+  async pedidos() {
+    api.interceptors.request.use(
+      config => {
+          config.headers['x-access-token'] = localStorage.getItem('tokenScriptsky');
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
       }
+    );
+    
+    const pedidos = await api.get(`/pedidos/${ this.state.situacao }`);
+
+    if(pedidos.data === 'Token invalido! Favor fazer login novamente.') {
+      window.location.replace('/login');
+    } else {
+      this.setState({ pedidos: pedidos.data });
     }
   }
 
-  pesquisaPorTitulo = () => {
-    if(this.state.titulo !== '') {
-      api.get(`/produto-pesquisa-por-titulo/${ this.state.titulo }`).then(produtos => {
-        this.setState({ produtos: produtos.data.rows });
-      });
-    }
-  }
-
+  /* 
   pesquisaPorSituacao = () => {
     if(this.state.grupo !== '') {
       api.get(`/pedidos/${ this.state.situacao }`).then(produtos => {
         this.setState({ produtos: produtos.data.rows });
       });
     } 
-  }
+  } 
+  */
 
   render(){
 
-    const { produtos, grupos, grupo, titulo } = this.state;
+    const { pedidos } = this.state;
 
     return (
       
       <div>
-        <Grid container spacing={2}>
+        {/* <Grid container spacing={2}>
           <Grid item sm={5} xs={12}>
             <TextField type="text" id="pesquisa" label="Pesquisa..." value={ titulo } onChange={ this.setTitulo } fullWidth/>
           </Grid>
@@ -104,41 +96,45 @@ export default class Pedidos extends Component {
               Pesquisa
             </Button>
           </Grid>
-        </Grid>
+        </Grid> */}
 
         <List className="list"
           subheader={
             <ListSubheader component="div">
-              Produtos
+              Pedidos
             </ListSubheader>
           }
         >
           {
-            produtos.map(produtos => (
+            pedidos.map(pedidos => (
               <div>
-                <ListItem button className="itens">
-                  <ListItemText 
-                    className="titulo"
-                    primary={ produtos.titulo }
-                    secondary={`R$ ${ produtos.preco } Situação: ${ produtos.situacao }`}
-                  />
-                  <ListItemIcon>
-                    <Link 
-                      to={`/produto-editar/${ produtos.cod_produto }`} 
-                      key={ produtos.cod_produto } 
-                      style={{ textDecoration: 'none', color: 'black', }}
-                    >
-                      <Button 
-                        type="buttom" 
-                        variant="contained" 
-                        color="secondary" 
-                      >
-                        Editar
-                      </Button>
-                    </Link>
-                  </ListItemIcon>
-                </ListItem>
-                <Divider />
+                <Card className="pedidos" elevation={3}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Joabe Silva
+                    </Typography>
+                    <Grid container spacing={1}>
+                      <Grid item xs={4} sm={3}>
+                        <Typography variant="body1" gutterBottom>
+                          {`R$ ${ pedidos.valor_total}`}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8} sm={4}>
+                        <Typography variant="body1" gutterBottom>
+                          { pedidos.data_criacao }
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8} sm={3}>
+                        <Typography variant="body1" className="pedido-situacao" gutterBottom>
+                          { pedidos.situacao }
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4} sm={2} className="cor">
+                        <ArrowIcon className="pedido-icon"/>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
               </div>
             ))
           }

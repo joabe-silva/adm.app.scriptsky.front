@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Login from './components/login';
 import Dashboard from './components/dashboard';
 import Carrinho from './components/carrinho';
 import CriarPedido from './components/criar-pedido';
@@ -15,7 +16,8 @@ import GrupoEditar from './components/grupo-editar';
 const Routes = () => (
     <BrowserRouter>
         <Switch>
-            <Route exact path="/" component={ Dashboard } />
+            <Route exact path="/" component={ Login } />
+            <Route exact path="/login" component={ Login } />
             <Route path="/dashboard" component={ Dashboard } />
             <Route path="/carrinho" component={ Carrinho } />
             <Route path="/criar-pedido" component={ CriarPedido } />
