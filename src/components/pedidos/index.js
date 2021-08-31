@@ -1,19 +1,14 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
-import { KeyboardDatePicker,} from '@material-ui/pickers';
-
+//import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-
 import List from '@material-ui/core/List';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import ArrowIcon from '@material-ui/icons/ArrowForwardIosRounded';
-
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -38,12 +33,13 @@ export default class Pedidos extends Component {
       descricao: 'Concluído'
     }],
     situacao: 0,
-    data_inicio: new Date('2014-08-18T21:11:54'),
-    data_fim: ''
+    data_inicial: '',
+    data_final: ''
   }
 
   async componentDidMount(){
     this.pedidos();
+    this.pegaData();
   }
 
   async pedidos() {
@@ -66,6 +62,21 @@ export default class Pedidos extends Component {
     }
   }
 
+  pegaData = () => {
+    const data = new Date();
+    const dia = data.getDate();
+    const mes = (data.getMonth()+1).toString();
+    const ano = data.getFullYear();
+    
+    if(mes.length < 2) {
+      const data = `${ ano }-0${ mes}-${ dia }`
+      this.setState({ data_inicial: data, data_final: data });
+    } else {
+      const data = `${ ano }-${ mes }-${ dia }`
+      this.setState({ data_inicial: data, data_final: data });
+    }
+  }
+
   setSituacao = (event) => {
     this.setState({ situacao: event.target.value });
   }
@@ -74,45 +85,50 @@ export default class Pedidos extends Component {
     this.setState({ data_inicial: event.target.value });
   }
 
-  setDataFim = (event) => {
-    this.setState({ data_fim: event.target.value });
+  setDataFinal = (event) => {
+    this.setState({ data_final: event.target.value });
   }
-  /* 
-  pesquisaPorSituacao = () => {
-    if(this.state.grupo !== '') {
-      api.get(`/pedidos/${ this.state.situacao }`).then(produtos => {
-        this.setState({ produtos: produtos.data.rows });
-      });
-    } 
+   
+  pesquisa = () => {
+    console.log(`Data Inicial: ${this.state.data_inicial} Data Final: ${this.state.data_final} situacao: ${this.state.situacao}`)
   } 
-  */
+  
 
   render(){
 
-    const { pedidos, situacoes, situacao, data_inicio } = this.state;
+    const { pedidos, situacoes, situacao, data_inicial, data_final } = this.state;
 
     return (
       
       <div>
         <Grid container spacing={2}>
-          <Grid item sm={5} xs={12}>
-            <KeyboardDatePicker
-              disableToolbar
-              variant="inline"
-              format="MM/dd/yyyy"
-              margin="normal"
-              id="date-picker-inline"
-              label="Date picker inline"
-              value={ data_inicio }
-              //onChange={'handleDateChange'}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-            }}
-        />
+          <Grid item sm={4} xs={12}>
+            <TextField
+              id="date"
+              label="Data Inicial"
+              type="date"
+              value={ data_inicial }
+              onChange={ this.setDataInicial }
+              InputLabelProps={{
+                shrink: true,
+              }}
+            /> 
           </Grid>
-          <Grid item sm={5} xs={8}>
+          <Grid item sm={4} xs={12}>
+            <TextField
+              id="date"
+              label="Data Final"
+              type="date"
+              value={ data_final }
+              onChange={ this.setDataFinal }
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item sm={4} xs={8}>
             <FormControl fullWidth>
-              <InputLabel>Grupo de Produtos</InputLabel>
+              <InputLabel>Situação</InputLabel>
               <Select value={ situacao } onChange={ this.setSituacao } >
                 {situacoes.map(situacoes => (
                   <MenuItem value={ situacoes.cod_situacao } key={ situacoes.cod_situacao }>
