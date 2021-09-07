@@ -63,18 +63,22 @@ export default class Pedidos extends Component {
   }
 
   pegaData = () => {
-    const data = new Date();
-    const dia = data.getDate();
-    const mes = (data.getMonth()+1).toString();
-    const ano = data.getFullYear();
-    
-    if(mes.length < 2) {
-      const data = `${ ano }-0${ mes}-${ dia }`
-      this.setState({ data_inicial: data, data_final: data });
-    } else {
-      const data = `${ ano }-${ mes }-${ dia }`
-      this.setState({ data_inicial: data, data_final: data });
+
+    function adicionaZero(numero){
+      if (numero <= 9) 
+          return "0" + numero;
+      else
+          return numero; 
     }
+
+    const data = new Date();
+    const dia = adicionaZero(data.getDate().toString());
+    const mes = adicionaZero(data.getMonth()+1).toString();
+    const ano = data.getFullYear();
+    const newData = `${ano}-${mes}-${dia}` 
+
+    this.setState({ data_inicial: newData, data_final: newData});
+    
   }
 
   setSituacao = (event) => {
@@ -112,7 +116,7 @@ export default class Pedidos extends Component {
               InputLabelProps={{
                 shrink: true,
               }}
-            /> 
+            />
           </Grid>
           <Grid item sm={4} xs={12}>
             <TextField
@@ -163,7 +167,7 @@ export default class Pedidos extends Component {
                 <Card className="pedidos" elevation={3}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
-                      Joabe Silva
+                      { pedidos.cliente }
                     </Typography>
                     <Grid container spacing={1}>
                       <Grid item xs={4} sm={3}>
