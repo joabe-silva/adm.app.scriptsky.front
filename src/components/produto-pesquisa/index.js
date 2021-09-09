@@ -79,7 +79,7 @@ export default class ProdutoPesquisa extends Component {
 
   render(){
 
-    const { produtos, grupos, grupo, titulo } = this.state;
+    const { produtos, grupos, grupo, titulo, parametro } = this.state;
 
     return (
       
@@ -123,6 +123,9 @@ export default class ProdutoPesquisa extends Component {
             produtos.map(produtos => (
               <div>
                 <ListItem button className="itens">
+                  <ListItemIcon className="imagemspc">
+                    <img src={`${ parametro.url_storage }${ produtos.imagem }${ parametro.url_complet }`} alt={ produtos.titulo } className="imagem" />
+                  </ListItemIcon>
                   <ListItemText 
                     className="titulo"
                     primary={ produtos.titulo }

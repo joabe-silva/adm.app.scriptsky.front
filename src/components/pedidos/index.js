@@ -38,32 +38,10 @@ export default class Pedidos extends Component {
   }
 
   async componentDidMount(){
-    this.pedidos();
     this.pegaData();
   }
 
-  async pedidos() {
-    api.interceptors.request.use(
-      config => {
-          config.headers['x-access-token'] = localStorage.getItem('tokenScriptsky');
-          return config;
-      },
-      error => {
-          return Promise.reject(error);
-      }
-    );
-    
-    const pedidos = await api.get(`/pedidos/${ this.state.situacao }`);
-
-    if(pedidos.data === 'Token invalido! Favor fazer login novamente.') {
-      window.location.replace('/login');
-    } else {
-      this.setState({ pedidos: pedidos.data });
-    }
-  }
-
   pegaData = () => {
-
     function adicionaZero(numero){
       if (numero <= 9) 
           return "0" + numero;
@@ -72,13 +50,12 @@ export default class Pedidos extends Component {
     }
 
     const data = new Date();
-    const dia = adicionaZero(data.getDate().toString());
+    const dia = adicionaZero(data.getDate()).toString();
     const mes = adicionaZero(data.getMonth()+1).toString();
     const ano = data.getFullYear();
     const newData = `${ano}-${mes}-${dia}` 
 
-    this.setState({ data_inicial: newData, data_final: newData});
-    
+    this.setState({ data_inicial: newData, data_final: newData}); 
   }
 
   setSituacao = (event) => {
@@ -93,8 +70,25 @@ export default class Pedidos extends Component {
     this.setState({ data_final: event.target.value });
   }
    
-  pesquisa = () => {
-    console.log(`Data Inicial: ${this.state.data_inicial} Data Final: ${this.state.data_final} situacao: ${this.state.situacao}`)
+  async pesquisa() {
+    api.interceptors.request.use(
+      config => {
+          config.headers['x-access-token'] = localStorage.getItem('tokenScriptsky');
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+    );
+
+    const pedidos = await api.get(`/pedidos/${ this.state.situacao }?dataIni=${ this.state.data_inicial }&dataFim=${ this.state.data_final }`);
+
+    if(pedidos.data === 'Token invalido! Favor fazer login novamente.') {
+      window.location.replace('/login');
+    } else {
+      this.setState({ pedidos: pedidos.data });
+    }
+
   } 
   
 
@@ -116,7 +110,7 @@ export default class Pedidos extends Component {
               InputLabelProps={{
                 shrink: true,
               }}
-            />
+            /> 
           </Grid>
           <Grid item sm={4} xs={12}>
             <TextField
@@ -135,7 +129,7 @@ export default class Pedidos extends Component {
               <InputLabel>Situação</InputLabel>
               <Select value={ situacao } onChange={ this.setSituacao } >
                 {situacoes.map(situacoes => (
-                  <MenuItem value={ situacoes.cod_situacao } key={ situacoes.cod_situacao }>
+                  <MenuItem value={ situacoes.cod_situacao} key={ situacoes.cod_situacao }>
                     { situacoes.descricao }
                   </MenuItem>
                 ))}
@@ -147,7 +141,7 @@ export default class Pedidos extends Component {
               type="buttom" 
               variant="contained" 
               color="primary" 
-              onClick={ this.pesquisa }
+              onClick={ () => this.pesquisa() }
             >
               Pesquisa
             </Button>
@@ -163,35 +157,33 @@ export default class Pedidos extends Component {
         >
           {
             pedidos.map(pedidos => (
-              <div>
-                <Card className="pedidos" elevation={3}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      { pedidos.cliente }
-                    </Typography>
-                    <Grid container spacing={1}>
-                      <Grid item xs={4} sm={3}>
-                        <Typography variant="body1" gutterBottom>
-                          {`R$ ${ pedidos.valor_total}`}
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={8} sm={4}>
-                        <Typography variant="body1" gutterBottom>
-                          { pedidos.data_criacao }
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={8} sm={3}>
-                        <Typography variant="body1" className="pedido-situacao" gutterBottom>
-                          { pedidos.situacao }
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={4} sm={2} className="cor">
-                        <ArrowIcon className="pedido-icon"/>
-                      </Grid>
+              <Card className="pedidos" elevation={3}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    { pedidos.cliente }
+                  </Typography>
+                  <Grid container spacing={1}>
+                    <Grid item xs={4} sm={3}>
+                      <Typography variant="body1" gutterBottom>
+                        {`R$ ${ pedidos.valor_total}`}
+                      </Typography>
                     </Grid>
-                  </CardContent>
-                </Card>
-              </div>
+                    <Grid item xs={8} sm={4}>
+                      <Typography variant="body1" gutterBottom>
+                        { pedidos.data_criacao }
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={8} sm={3}>
+                      <Typography variant="body1" className="pedido-situacao" gutterBottom>
+                        { pedidos.situacao }
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4} sm={2} className="cor">
+                      <ArrowIcon className="pedido-icon"/>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             ))
           }
         </List>
