@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { isAuthenticated } from './auth';
 import Login from './components/login';
 import Dashboard from './components/dashboard';
 import Carrinho from './components/carrinho';
@@ -13,12 +14,19 @@ import GrupoCadastro from './components/grupo-cadastro';
 import GrupoPesquisa from './components/grupo-pesquisa';
 import GrupoEditar from './components/grupo-editar';
 
+const PrivateRoute = ({ component: Component, ...rest}) => {
+    if(isAuthenticated() === false) {
+        return <Redirect to="/login" />
+    } 
+    return <Component { ...rest} />
+}
+
 const Routes = () => (
     <BrowserRouter>
         <Switch>
             <Route exact path="/" component={ Login } />
-            <Route exact path="/login" component={ Login } />
-            <Route path="/dashboard" component={ Dashboard } />
+            <Route path="/login" component={ Login } />
+            <PrivateRoute path="/dashboard" component={ Dashboard } />
             <Route path="/carrinho" component={ Carrinho } />
             <Route path="/criar-pedido" component={ CriarPedido } />
             <Route path="/item/:cod_produto" component={ Item } />

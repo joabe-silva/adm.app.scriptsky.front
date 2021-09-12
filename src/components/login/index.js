@@ -51,7 +51,7 @@ export default class Login extends Component {
                     }
                 } else {
                     localStorage.setItem('tokenScriptsky', res.data)
-                    window.location.replace('/')
+                    window.location.replace('/dashboard')
                 }
             }
 
