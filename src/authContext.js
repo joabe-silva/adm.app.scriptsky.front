@@ -24,7 +24,6 @@ async function auth(){
             return false
         }
     } 
-    
 }
 
 function AuthProvider({ children }) {

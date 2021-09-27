@@ -83,7 +83,7 @@ export default class Pedidos extends Component {
 
     const pedidos = await api.get(`/pedidos/${ this.state.situacao }?dataIni=${ this.state.data_inicial }&dataFim=${ this.state.data_final }`);
 
-    if(pedidos.data === 'Token invalido! Favor fazer login novamente.') {
+    if(pedidos.data === 'Token invalido! Favor fazer login novamente.' || pedidos.data === 'Sua sessão inspirou! Favor fazer login novamente.') {
       window.location.replace('/login');
     } else {
       this.setState({ pedidos: pedidos.data });

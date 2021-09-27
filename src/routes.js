@@ -32,6 +32,7 @@ const Routes = () => (
         <Switch> 
             <AuthProvider>
                 <Route path="/login" component={ Login } /> 
+                <Route exact path="/" component={ Login } />
                 <PrivateRoute path="/dashboard" component={ Dashboard } />
                 <PrivateRoute path="/carrinho" component={ Carrinho } />
                 <PrivateRoute path="/criar-pedido" component={ CriarPedido } />
