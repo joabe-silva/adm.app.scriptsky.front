@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { isAuthenticated } from './auth';
+import { AuthProvider } from './authContext';
+import { Context } from './authContext';
 import Login from './components/login';
 import Dashboard from './components/dashboard';
 import Carrinho from './components/carrinho';
@@ -14,29 +15,35 @@ import GrupoCadastro from './components/grupo-cadastro';
 import GrupoPesquisa from './components/grupo-pesquisa';
 import GrupoEditar from './components/grupo-editar';
 
-const PrivateRoute = ({ component: Component, ...rest}) => {
-    if(isAuthenticated() === false) {
-        return <Redirect to="/login" />
-    } 
-    return <Component { ...rest} />
-}
+const PrivateRoute = ({component: Component, ...rest}) => {
+    const { isAuthenticated } = useContext(Context);
+
+    return (
+        <Route {...rest} render={props => (
+            isAuthenticated ?
+                <Component {...props} />
+            : <Redirect to="/login" />
+        )} />
+    );
+};
 
 const Routes = () => (
     <BrowserRouter>
-        <Switch>
-            <Route exact path="/" component={ Login } />
-            <Route path="/login" component={ Login } />
-            <PrivateRoute path="/dashboard" component={ Dashboard } />
-            <Route path="/carrinho" component={ Carrinho } />
-            <Route path="/criar-pedido" component={ CriarPedido } />
-            <Route path="/item/:cod_produto" component={ Item } />
-            <Route path="/pedidos" component={ Pedidos } />
-            <Route path="/produto-cadastro" component={ ProdutoCadastro } />
-            <Route path="/produto-pesquisa" component={ ProdutoPesquisa } />
-            <Route path="/produto-editar/:cod_produto" component={ ProdutoEditar } />
-            <Route path="/grupo-cadastro" component={ GrupoCadastro } />
-            <Route path="/grupo-pesquisa" component={ GrupoPesquisa } />
-            <Route path="/grupo-editar/:cod_grupo" component={ GrupoEditar } />
+        <Switch> 
+            <AuthProvider>
+                <Route path="/login" component={ Login } /> 
+                <PrivateRoute path="/dashboard" component={ Dashboard } />
+                <PrivateRoute path="/carrinho" component={ Carrinho } />
+                <PrivateRoute path="/criar-pedido" component={ CriarPedido } />
+                <PrivateRoute path="/item/:cod_produto" component={ Item } />
+                <PrivateRoute path="/pedidos" component={ Pedidos } />
+                <PrivateRoute path="/produto-cadastro" component={ ProdutoCadastro } />
+                <PrivateRoute path="/produto-pesquisa" component={ ProdutoPesquisa } />
+                <PrivateRoute path="/produto-editar/:cod_produto" component={ ProdutoEditar } />
+                <PrivateRoute path="/grupo-cadastro" component={ GrupoCadastro } />
+                <PrivateRoute path="/grupo-pesquisa" component={ GrupoPesquisa } />
+                <PrivateRoute path="/grupo-editar/:cod_grupo" component={ GrupoEditar } /> 
+            </AuthProvider>
         </Switch>
     </BrowserRouter>
 );
