@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-//import { Link } from 'react-router-dom';
+import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -87,11 +87,10 @@ export default class Pedidos extends Component {
       window.location.replace('/login');
     } else {
       this.setState({ pedidos: pedidos.data });
-    }
+    } 
 
   } 
   
-
   render(){
 
     const { pedidos, situacoes, situacao, data_inicial, data_final } = this.state;
@@ -146,7 +145,7 @@ export default class Pedidos extends Component {
               Pesquisa
             </Button>
           </Grid>
-        </Grid> 
+        </Grid>  
 
         <List className="list"
           subheader={
@@ -157,33 +156,35 @@ export default class Pedidos extends Component {
         >
           {
             pedidos.map(pedidos => (
-              <Card className="pedidos" elevation={3}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    { pedidos.cliente }
-                  </Typography>
-                  <Grid container spacing={1}>
-                    <Grid item xs={4} sm={3}>
-                      <Typography variant="body1" gutterBottom>
-                        {`R$ ${ pedidos.valor_total}`}
-                      </Typography>
+              <Link href={`/pedido/${ pedidos.cod_pedido }`} style={{ textDecoration: 'none', color: 'black', }}>
+                <Card className="pedidos" elevation={3}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      {`#${ pedidos.cod_pedido } - ${ pedidos.cliente }`}
+                    </Typography>
+                    <Grid container spacing={1}>
+                      <Grid item xs={4} sm={3}>
+                        <Typography variant="body1" gutterBottom>
+                          {`R$ ${ pedidos.valor_total}`}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8} sm={4}>
+                        <Typography variant="body1" gutterBottom>
+                          { pedidos.data_criacao }
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8} sm={3}>
+                        <Typography variant="body1" className="pedido-situacao" gutterBottom>
+                          { pedidos.situacao }
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={4} sm={2} className="cor">
+                        <ArrowIcon className="pedido-icon"/>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={8} sm={4}>
-                      <Typography variant="body1" gutterBottom>
-                        { pedidos.data_criacao }
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={8} sm={3}>
-                      <Typography variant="body1" className="pedido-situacao" gutterBottom>
-                        { pedidos.situacao }
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={4} sm={2} className="cor">
-                      <ArrowIcon className="pedido-icon"/>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))
           }
         </List>

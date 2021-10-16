@@ -7,6 +7,7 @@ import Dashboard from './components/dashboard';
 import Carrinho from './components/carrinho';
 import CriarPedido from './components/criar-pedido';
 import Item from './components/item';
+import Pedido from './components/pedido';
 import Pedidos from './components/pedidos';
 import ProdutoCadastro from './components/produto-cadastro';
 import ProdutoPesquisa from './components/produto-pesquisa';
@@ -37,6 +38,7 @@ const Routes = () => (
                 <PrivateRoute path="/carrinho" component={ Carrinho } />
                 <PrivateRoute path="/criar-pedido" component={ CriarPedido } />
                 <PrivateRoute path="/item/:cod_produto" component={ Item } />
+                <PrivateRoute path="/pedido/:cod_pedido" component={ Pedido } />
                 <PrivateRoute path="/pedidos" component={ Pedidos } />
                 <PrivateRoute path="/produto-cadastro" component={ ProdutoCadastro } />
                 <PrivateRoute path="/produto-pesquisa" component={ ProdutoPesquisa } />
@@ -44,7 +46,7 @@ const Routes = () => (
                 <PrivateRoute path="/grupo-cadastro" component={ GrupoCadastro } />
                 <PrivateRoute path="/grupo-pesquisa" component={ GrupoPesquisa } />
                 <PrivateRoute path="/grupo-editar/:cod_grupo" component={ GrupoEditar } /> 
-            </AuthProvider>
+            </AuthProvider> 
         </Switch>
     </BrowserRouter>
 );
