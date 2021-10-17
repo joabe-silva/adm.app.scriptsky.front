@@ -20,4 +20,10 @@
 .back {
     right: 30%;
 }
+.vPedido {
+    color: darkorange;
+}
+.fPagamento {
+    color: green;
+}
   

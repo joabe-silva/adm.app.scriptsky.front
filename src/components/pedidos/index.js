@@ -178,7 +178,7 @@ export default class Pedidos extends Component {
                           { pedidos.situacao }
                         </Typography>
                       </Grid>
-                      <Grid item xs={4} sm={2} className="cor">
+                      <Grid item xs={4} sm={2}>
                         <ArrowIcon className="pedido-icon"/>
                       </Grid>
                     </Grid>
