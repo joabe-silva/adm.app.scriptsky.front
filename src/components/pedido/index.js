@@ -56,8 +56,24 @@ export default class Pedido extends Component {
     } 
   }
  
+  async alteraSituacao(situacao) {
+    api.interceptors.request.use(
+      config => {
+          config.headers['x-access-token'] = localStorage.getItem('tokenScriptsky');
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+    );
+
+    const pedido = await api.put(`/editar-pedido/${ this.state.pedido.cod_pedido }`, { situacao: situacao });
+    console.log(pedido.data)
+  }
+
   setSituacao = (event) => {
     this.setState({ situacao: event.target.value });
+    this.alteraSituacao(event.target.value)
   }
 
   voltar = () => {
@@ -80,34 +96,34 @@ export default class Pedido extends Component {
         <Card elevation={4}> 
           <CardContent>
             <Grid container spacing={1}>
-              <Grid item xs={3}>
+              <Grid item sm={3} xs={2}>
                 <Typography variant="h6" gutterBottom component="div">
                   { `#${ pedido.cod_pedido }` }
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item sm={4} xs={5}>
                 <Typography variant="h6" gutterBottom component="div">
                   { pedido.cliente }
                 </Typography>
               </Grid>
-              <Grid item xs={5}>
+              <Grid item sm={5} xs={5}>
                 <Typography variant="h6" gutterBottom component="div">
                   { pedido.data_criacao }
                 </Typography>
               </Grid>
             </Grid>
             <Grid container spacing={1}>
-              <Grid item xs={3}>
+              <Grid item sm={3} xs={6}>
                 <Typography variant="h6" className="vPedido" gutterBottom component="div">
                   { `R$ ${ pedido.valor_total }`}
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item sm={4} xs={6}>
                 <Typography variant="h6" className="fPagamento" gutterBottom component="div">
                   { pedido.forma_pagamento }
                 </Typography>
               </Grid>
-              <Grid item xs={5}>
+              <Grid item sm={5} xs={12}>
                 <FormControl required fullWidth>
                   <Select value={ situacao } onChange={ this.setSituacao } >
                       {situacoes.map(situacoes => (
@@ -140,7 +156,7 @@ export default class Pedido extends Component {
                 <ListItem button className="itens">
                     <ListItemText 
                       className="titulo"
-                      primary={`${ pedidoItens.quantidade }x - ${ pedidoItens.titulo } - R$ ${ pedidoItens.preco } - Total R$ ${ pedidoItens.valor_total }`}
+                      primary={`${ pedidoItens.quantidade }x - ${ pedidoItens.titulo } - Total R$ ${ pedidoItens.valor_total }`}
                       secondary={`Obs: ${ pedidoItens.observacao }`}
                     />
                 </ListItem>
